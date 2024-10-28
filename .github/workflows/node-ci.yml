@@ -37,9 +37,6 @@ jobs:
 
       - name: Copy env file
         run: cp .env.test .env
-      
-      - name: Info
-        run: cat .env
 
       - name: Install packages
         run: npm ci --unsafe-perm=true --allow-root
