@@ -39,7 +39,7 @@ jobs:
         run: cp .env.test .env
 
       - name: Install packages
-        run: npm ci --unsafe-perm=true --allow-root
+        run: npm i --unsafe-perm=true --allow-root
 
       - name: Run server
         run: NODE_ENV=test npm run start
