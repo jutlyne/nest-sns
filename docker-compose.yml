@@ -1,0 +1,50 @@
+version: "3"
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: ${APP_NAME:-sns}_database
+    restart: unless-stopped
+    tty: true
+    ports:
+      - '${FORWARD_DB_PORT:-3306}:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: '${DATABASE_PASSWORD}'
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_DATABASE: '${DATABASE_NAME}'
+      MYSQL_USER: '${DATABASE_USERNAME}'
+      MYSQL_PASSWORD: '${DATABASE_PASSWORD}'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - ./docker/mysql/data:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/etc/mysql/my.cnf
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-p${DATABASE_PASSWORD}"]
+      retries: 3
+      timeout: 5s
+    networks:
+      - sns-network
+
+  nodejs:
+    container_name: ${APP_NAME:-sns}_app
+    build:
+      context: .
+      dockerfile: docker/node/Dockerfile
+      args:
+      - EXPOSE_PORT=$PORT
+    user: "1000:1000"
+    command: "bash ./scripts/start.sh"
+    ports:
+      - '${PORT:-3000}:${PORT}'
+    volumes:
+      - .:/app
+    depends_on:
+      - mysql
+    restart: unless-stopped
+    networks:
+      - sns-network
+
+networks:
+  sns-network:
+    driver: bridge
