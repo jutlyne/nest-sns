@@ -1,0 +1,45 @@
+name: Github Actions
+
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+
+jobs:
+  build-job: 
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [lts, 20, 18]
+    container:
+      image: node:${{ matrix.node-version }}
+      options: --user root
+      volumes:
+        - .:/app
+    services:
+      database:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: "password"
+          MYSQL_ROOT_HOST: "%"
+          MYSQL_DATABASE: "sns_database"
+          MYSQL_USER: "docker"
+          MYSQL_PASSWORD: "password"
+          MYSQL_ALLOW_EMPTY_PASSWORD: 1
+          SERVICE_TAGS: dev
+          SERVICE_NAME: mysql
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Copy env file
+        run: cp .env.test .env
+
+      - name: Install packages
+        run: npm i --unsafe-perm=true --allow-root
+
+      - name: Run server
+        run: NODE_ENV=test npm run start

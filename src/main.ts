@@ -8,6 +8,8 @@ import { AllConfigType } from './config/config.interface';
 import validationOptions from './utils/validate-option';
 import { useContainer } from 'class-validator';
 import { AppLogger } from './utils/logger';
+import { Environment } from './config/app.config';
+import { checkServerStatus } from './utils/check-server-status';
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
@@ -37,18 +39,37 @@ async function bootstrap() {
 	SwaggerModule.setup('docs', app, documentFactory);
 
 	const appLogger = app.get(AppLogger);
+	const appEnv = configService.getOrThrow('app.nodeEnv', { infer: true });
 
 	try {
-		await app.listen(PORT, () => {
+		await app.listen(PORT, async () => {
 			appLogger.log(`Running on Port ${PORT}`);
 			appLogger.log(
 				`Running in ${configService.getOrThrow('app.nodeEnv', {
 					infer: true,
 				})} `,
 			);
+
+			if (appEnv == Environment.Test) {
+				try {
+					const statusCode = await checkServerStatus(PORT);
+					if (statusCode === 200) {
+						console.log('Test hosting successful');
+						process.exit(0);
+					}
+					throw new Error(`Test hosting failed: ${statusCode}.`);
+				} catch (error) {
+					throw new Error(`Error executing curl: ${error}`);
+				}
+			}
 		});
 	} catch (err) {
-		console.log(err);
+		appLogger.log(err);
+
+		if (appEnv == Environment.Test) {
+			process.exit(1);
+		}
 	}
 }
+
 bootstrap();
