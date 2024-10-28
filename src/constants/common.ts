@@ -12,4 +12,5 @@ export enum Routes {
 	AUTH = 'auth',
 	AUTH_GOOGLE = 'auth/google',
 	USERS = 'users',
+	HEALTH = 'health',
 }

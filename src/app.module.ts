@@ -16,6 +16,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { WinstonModule } from 'nest-winston';
 import * as winston from 'winston';
 import { AppLogger } from './utils/logger';
+import { HealthModule } from './health/health.module';
 import authConfig from './config/auth.config';
 
 @Module({
@@ -71,6 +72,7 @@ import authConfig from './config/auth.config';
 		}),
 		UsersModule,
 		AuthModule,
+		HealthModule,
 	],
 	providers: [IsExist, IsNotExist, AppLogger],
 })
