@@ -4,8 +4,8 @@ import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dtos/create-user.dto';
-import { EntityCondition } from '@/utils/interface/entity-condition.interface';
-import { NullableType } from '@/utils/interface/nullable.interface';
+import { EntityCondition } from '@/utils/interfaces/entity-condition.interface';
+import { NullableType } from '@/utils/interfaces/nullable.interface';
 
 @Injectable()
 export class UsersService implements IUserService {

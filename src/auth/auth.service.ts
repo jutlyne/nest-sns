@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EmailLoginDto } from './dtos/email-login.dto';
-import { LoginResponseInterface } from './interface/login-response.interface';
+import { LoginResponseInterface } from './interfaces/login-response.interface';
 import { IAuthService } from './auth';
 import { Services } from '@/constants/common';
 import { IUserService } from '@/users/users';
@@ -20,7 +20,9 @@ export class AuthService implements IAuthService {
 		private readonly jwtService: JwtService,
 	) {}
 
-	async userLogin(loginDto: EmailLoginDto): Promise<ResponseInterface<LoginResponseInterface>> {
+	async userLogin(
+		loginDto: EmailLoginDto,
+	): Promise<ResponseInterface<LoginResponseInterface>> {
 		const user = await this.usersService.findOne({
 			email: loginDto.email,
 		});
@@ -64,10 +66,25 @@ export class AuthService implements IAuthService {
 		};
 	}
 
-	async userRegister(registerDto: CreateUserDto): Promise<ResponseInterface<User>> {
+	async userRegister(
+		registerDto: CreateUserDto,
+	): Promise<ResponseInterface<User>> {
 		const user = await this.usersService.createUser(registerDto);
 		return {
 			data: user,
+		};
+	}
+
+	async getProfile(id?: number): Promise<ResponseInterface<User | {}>> {
+		if (!id)
+			return {
+				data: {},
+			};
+
+		const data = await this.usersService.findOne({ id });
+
+		return {
+			data,
 		};
 	}
 

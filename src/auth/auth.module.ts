@@ -7,6 +7,7 @@ import { IsNotExist } from '@/utils/validators/is-not-exists.validator';
 import { UsersModule } from '@/users/users.module';
 import { AppLogger } from '@/utils/logger';
 import { JwtModule } from '@nestjs/jwt';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
 	imports: [
@@ -20,6 +21,7 @@ import { JwtModule } from '@nestjs/jwt';
 		IsExist,
     IsNotExist,
 		AppLogger,
+		JwtStrategy,
 		{
 			provide: Services.AUTH,
 			useClass: AuthService,
