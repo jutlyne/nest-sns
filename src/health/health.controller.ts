@@ -9,8 +9,8 @@ import { HealthCheckService, HttpHealthIndicator, HealthCheck } from '@nestjs/te
 export class HealthController {
   constructor(
 		private readonly configService: ConfigService<AllConfigType>,
-    private health: HealthCheckService,
-    private http: HttpHealthIndicator,
+    private readonly health: HealthCheckService,
+    private readonly http: HttpHealthIndicator,
   ) {}
 
   @Get()
