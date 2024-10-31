@@ -5,7 +5,7 @@ import { AllConfigType } from 'src/config/config.interface';
 
 @Injectable()
 export class DatabaseConfigService {
-  constructor(private configService: ConfigService<AllConfigType>) {}
+  constructor(private readonly configService: ConfigService<AllConfigType>) {}
 
   createTypeOrmOptions(): TypeOrmModuleOptions {
     return {

@@ -11,7 +11,7 @@ import {
 	UseInterceptors,
 } from '@nestjs/common';
 import { Routes, Services } from '@/constants/common';
-import { ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { IAuthService } from './auth';
 import { EmailLoginDto } from './dtos/email-login.dto';
 import { LoginResponseInterface } from './interfaces/login-response.interface';

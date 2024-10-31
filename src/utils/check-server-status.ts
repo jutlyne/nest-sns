@@ -7,7 +7,7 @@ export const checkServerStatus = (port: number): Promise<number> => {
 			(error, stdout) => {
 				if (error) {
 					console.error('Error executing curl:', error.message);
-					reject(error);
+					reject(new Error(error.message))
 					return;
 				}
 
