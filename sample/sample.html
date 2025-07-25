@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Chat App with Room & Status</title>
+		<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				margin: 20px;
+			}
+			input {
+				padding: 8px;
+				margin: 4px;
+			}
+			button {
+				padding: 8px 12px;
+			}
+			#messages {
+				list-style: none;
+				padding: 0;
+				margin-top: 20px;
+			}
+			#messages li {
+				margin-bottom: 10px;
+				padding: 6px;
+				border-bottom: 1px solid #ddd;
+			}
+			.sending {
+				color: gray;
+			}
+			.sent {
+				color: black;
+			}
+			.error {
+				color: red;
+				font-style: italic;
+			}
+		</style>
+	</head>
+	<body>
+		<h2>Socket.IO Room Chat (With Message Status)</h2>
+
+		<input id="username" placeholder="Your name" />
+		<input id="room" placeholder="Room name" />
+		<button onclick="joinRoom()">Join Room</button>
+
+		<br /><br />
+
+		<input id="message" placeholder="Your message" style="width: 300px" />
+		<button onclick="sendMessage()">Send</button>
+
+		<ul id="messages"></ul>
+
+		<script>
+			const socket = io('http://localhost:3000', { withCredentials: true });
+			const messageMap = new Map();
+
+			function joinRoom() {
+				const room = document.getElementById('room').value;
+				socket.emit('joinRoom', room);
+			}
+
+			function sendMessage() {
+				const user = document.getElementById('username').value;
+				const message = document.getElementById('message').value;
+				const room = document.getElementById('room').value;
+				const timestamp = new Date().toISOString();
+				const messageId = `${user}_${timestamp}`;
+
+				if (!user || !room || !message)
+					return renderError('Please enter all fields');
+
+				const tempMessage = {
+					user,
+					room,
+					message,
+					timestamp,
+					messageId,
+					status: 'sending',
+				};
+
+				renderMessage(tempMessage);
+				socket.emit('message', tempMessage);
+
+				document.getElementById('message').value = '';
+			}
+
+			function renderMessage(data) {
+				let li = document.getElementById(data.messageId);
+
+				if (!li) {
+					li = document.createElement('li');
+					li.id = data.messageId;
+					document.getElementById('messages').appendChild(li);
+				}
+
+				li.className = data.status === 'sending' ? 'sending' : 'sent';
+				li.innerText = `[${data.status}] ${data.user} @ ${formatTime(data.timestamp)}: ${data.message}`;
+			}
+
+			function renderError(message) {
+				const li = document.createElement('li');
+				li.className = 'error';
+				li.innerText = `[ERROR]: ${message}`;
+				document.getElementById('messages').appendChild(li);
+			}
+
+			function formatTime(ts) {
+				const d = new Date(ts);
+				return `${d.getHours().toString().padStart(2, '0')}:${d
+					.getMinutes()
+					.toString()
+					.padStart(2, '0')}`;
+			}
+
+			socket.on('message', (data) => {
+				data.status = 'sent';
+				renderMessage(data);
+			});
+
+			socket.on('error', (error) => {
+				const message = error?.message || 'Unknown error';
+				renderError(message);
+				console.error('Socket error:', error);
+			});
+		</script>
+	</body>
+</html>

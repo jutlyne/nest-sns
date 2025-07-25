@@ -23,6 +23,11 @@ async function bootstrap() {
 
 	app.use(cookieParser());
 	app.useGlobalPipes(new ValidationPipe(validationOptions));
+	app.enableCors({
+		origin: configService.getOrThrow('app.frontendUrl', { infer: true }),
+		credentials: true,
+	});
+
 	useContainer(app.select(AppModule), { fallbackOnErrors: true }); // https://github.com/nestjs/typeorm/issues/1352#issuecomment-1193144208
 
 	const PORT = configService.getOrThrow('app.port', { infer: true });

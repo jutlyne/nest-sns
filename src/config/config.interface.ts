@@ -4,6 +4,7 @@ export interface AppConfig {
 	workingDirectory: string;
 	port: number;
 	apiPrefix: string;
+	frontendUrl: string;
 }
 
 export interface DatabaseConfig {
@@ -15,14 +16,14 @@ export interface DatabaseConfig {
 	name?: string;
 	username?: string;
 	synchronize?: boolean;
-};
+}
 
 export interface AuthConfig {
 	secret?: string;
 	expires?: string;
 	refreshSecret?: string;
 	refreshExpires?: string;
-};
+}
 
 export interface MailerConfig {
 	port: number;
@@ -34,11 +35,11 @@ export interface MailerConfig {
 	ignoreTLS: boolean;
 	secure: boolean;
 	requireTLS: boolean;
-};
+}
 
 export interface AllConfigType {
 	app: AppConfig;
 	database: DatabaseConfig;
 	auth: AuthConfig;
 	mailer: MailerConfig;
-};
+}
