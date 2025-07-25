@@ -22,7 +22,7 @@ export class AuthService implements IAuthService {
 
 	async userLogin(
 		loginDto: EmailLoginDto,
-	): Promise<ResponseInterface<LoginResponseInterface>> {
+	): Promise<LoginResponseInterface> {
 		const user = await this.usersService.findOne({
 			email: loginDto.email,
 		});
@@ -57,12 +57,10 @@ export class AuthService implements IAuthService {
 		});
 
 		return {
-			data: {
-				token,
-				refreshToken,
-				tokenExpires,
-				user,
-			},
+			token,
+			refreshToken,
+			tokenExpires,
+			user,
 		};
 	}
 
