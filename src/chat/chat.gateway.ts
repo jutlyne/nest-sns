@@ -71,6 +71,17 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		@ConnectedSocket() client: Socket,
 	) {
 		await new Promise((resolve) => setTimeout(resolve, 1500));
+
+		if (!data.message || data.message.trim().length === 0) {
+			client.emit('error', { message: 'Message cannot be empty' });
+			return;
+		}
+
+		if (data.message.length > 10) {
+			client.emit('error', { message: 'Message too long' });
+			return;
+		}
+
 		const sentData = { ...data, status: 'sent' };
 
 		client.to(data.room).emit('message', sentData);
