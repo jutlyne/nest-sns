@@ -17,21 +17,21 @@ export interface Response<T> {
 export class TransformResponseInterceptor<T>
 	implements NestInterceptor<T, Response<T>>
 {
-	constructor(
-		private readonly cls: ClsService,
-	) {}
+	constructor(private readonly cls: ClsService) {}
 
 	intercept(
 		context: ExecutionContext,
 		next: CallHandler,
 	): Observable<Response<T>> {
-		return next.handle().pipe(
-			map((data) => ({
-				reqId: this.cls.getId(),
-				statusCode: context.switchToHttp().getResponse().statusCode,
-				message: data.message || '',
-				data: data.data,
-			})),
-		);
+		return next
+			.handle()
+			.pipe(
+				map((data) => ({
+					reqId: this.cls.getId(),
+					statusCode: context.switchToHttp().getResponse().statusCode,
+					message: data.message || 'Success',
+					data: data.data,
+				})),
+			);
 	}
 }

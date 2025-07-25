@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import cookieParser from 'cookie-parser';
 
 import { AppModule } from './app.module';
 import { AllConfigType } from './config/config.interface';
@@ -17,11 +18,10 @@ async function bootstrap() {
 
 	app.setGlobalPrefix(
 		configService.getOrThrow('app.apiPrefix', { infer: true }),
-		{
-			exclude: ['/'],
-		},
+		{ exclude: ['/'] },
 	);
 
+	app.use(cookieParser());
 	app.useGlobalPipes(new ValidationPipe(validationOptions));
 	useContainer(app.select(AppModule), { fallbackOnErrors: true }); // https://github.com/nestjs/typeorm/issues/1352#issuecomment-1193144208
 

@@ -3,7 +3,7 @@ import {
 	ValidatorConstraintInterface,
 } from 'class-validator';
 import { DataSource } from 'typeorm';
-import { getDataSourceName, InjectDataSource } from '@nestjs/typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
 import { ValidationArguments } from 'class-validator/types/validation/ValidationArguments';
 import { Injectable } from '@nestjs/common';
 
@@ -12,7 +12,7 @@ import { Injectable } from '@nestjs/common';
 export class IsExist implements ValidatorConstraintInterface {
 	constructor(
 		@InjectDataSource()
-		private dataSource: DataSource,
+		private readonly dataSource: DataSource,
 	) {}
 
 	async validate(value: string, validationArguments: ValidationArguments) {
@@ -22,8 +22,8 @@ export class IsExist implements ValidatorConstraintInterface {
 			.getRepository(repository)
 			.findOne({
 				where: {
-					[pathToProperty ? pathToProperty : validationArguments.property]:
-						pathToProperty ? value?.[pathToProperty] : value,
+					[pathToProperty || validationArguments.property]:
+						value?.[pathToProperty] || value,
 				},
 			});
 
