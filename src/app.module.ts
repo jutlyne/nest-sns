@@ -17,6 +17,8 @@ import { WinstonModule } from 'nest-winston';
 import * as winston from 'winston';
 import { AppLogger } from './utils/logger';
 import { HealthModule } from './health/health.module';
+import { ChatGateway } from './chat/chat.gateway';
+import { ChatModule } from './chat/chat.module';
 import authConfig from './config/auth.config';
 
 @Module({
@@ -73,7 +75,8 @@ import authConfig from './config/auth.config';
 		UsersModule,
 		AuthModule,
 		HealthModule,
+		ChatModule,
 	],
-	providers: [IsExist, IsNotExist, AppLogger],
+	providers: [IsExist, IsNotExist, AppLogger, ChatGateway],
 })
 export class AppModule {}
