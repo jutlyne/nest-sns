@@ -18,6 +18,7 @@ import * as winston from 'winston';
 import { AppLogger } from './utils/logger';
 import { HealthModule } from './health/health.module';
 import { ChatModule } from './chat/chat.module';
+import { CallModule } from './call/call.module';
 import authConfig from './config/auth.config';
 
 @Module({
@@ -75,6 +76,7 @@ import authConfig from './config/auth.config';
 		AuthModule,
 		HealthModule,
 		ChatModule,
+		CallModule,
 	],
 	providers: [IsExist, IsNotExist, AppLogger],
 })
