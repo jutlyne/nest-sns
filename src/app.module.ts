@@ -1,16 +1,8 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { DataSource, DataSourceOptions } from 'typeorm';
+import { ConfigModule } from '@nestjs/config';
 
 import appConfig from './config/app.config';
-import databaseConfig from './config/database.config';
-import { DatabaseConfigService } from './database/database-config.service';
 
-import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
-import { IsExist } from './utils/validators/is-exists.validator';
-import { IsNotExist } from './utils/validators/is-not-exists.validator';
 import { ClsModule } from 'nestjs-cls';
 import { v4 as uuidv4 } from 'uuid';
 import { WinstonModule } from 'nest-winston';
@@ -25,24 +17,8 @@ import authConfig from './config/auth.config';
 	imports: [
 		ConfigModule.forRoot({
 			envFilePath: '.env',
-			load: [appConfig, databaseConfig, authConfig],
+			load: [appConfig, authConfig],
 			isGlobal: true,
-		}),
-		TypeOrmModule.forRootAsync({
-			useClass: DatabaseConfigService,
-			imports: [ConfigModule],
-			inject: [ConfigService],
-			dataSourceFactory: async (options: DataSourceOptions) => {
-				const dataSource = new DataSource(options);
-				try {
-					if (!dataSource.isInitialized) {
-						await dataSource.initialize();
-					}
-				} catch (error) {
-					console.error(error?.message);
-				}
-				return dataSource;
-			},
 		}),
 		ClsModule.forRoot({
 			global: true,
@@ -72,12 +48,10 @@ import authConfig from './config/auth.config';
 				}),
 			],
 		}),
-		UsersModule,
-		AuthModule,
 		HealthModule,
 		ChatModule,
 		CallModule,
 	],
-	providers: [IsExist, IsNotExist, AppLogger],
+	providers: [AppLogger],
 })
 export class AppModule {}
